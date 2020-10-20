@@ -40,6 +40,36 @@ class simpleStorage {
         })  
     });
   }
+
+  getOwner() {
+    return this.contract.methods.owner().call();
+  }
+
+  setOwner(address) {
+    let accounts = [];
+
+    return new Promise((resolve, reject) => {
+      MetaMask.getAccounts()
+        .then(_accounts => {
+          accounts = _accounts;
+
+          return this.contract.methods.changeOwner(address).estimateGas({ from: accounts[0] })
+        })
+        .then(gasEstimate => {
+          console.log(`Gas estimation: ${gasEstimate}`);
+          
+          return this.contract.methods.changeOwner(address).send({ from: accounts[0], gas: gasEstimate });
+        })
+        .then(receipt => {
+          console.log(receipt);
+
+          resolve(receipt);
+        })
+        .catch(error => {
+          reject(error);
+        })  
+    });
+  }
 }
 
 const SimpleStorage = new simpleStorage();

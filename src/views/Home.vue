@@ -38,8 +38,15 @@
     </pre>
     <h3>Demo</h3>
     <p>Stored Data: {{ storedData }}</p>
-    <form @submit.prevent="submitData">
+    <form @submit.prevent="setStoredData">
+      Change Data
       <input type="text" name="data">
+      <button type="submit">Change</button>
+    </form>
+    <p>Owner: {{ owner }}</p>
+    <form @submit.prevent="setOwner">
+      Change Owner
+      <input type="text" name="owner">
       <button type="submit">Change</button>
     </form>
   </div>
@@ -53,14 +60,14 @@ export default {
   components: {},
   data() {
     return {
-      storedData: ""
+      storedData: "",
+      owner: ""
     }
   },
   created() {
     /**
-     * 1. Get an instance of the SimpleStorage contract
-     * 2. Call the storedData method
-     * 3. Display that on the screen
+     * 1. Call the getStoredData method on the SimpleStorage class
+     * 2. Display result on the screen
      */
     SimpleStorage.getStoredData()
       .then(_storedData => {
@@ -69,12 +76,24 @@ export default {
       .catch(error => {
         console.log(error);
       });
+
+    /**
+     * 1. Call the getOwner method on the SimpleStorage class
+     * 2. Display result on the screen
+     */
+    SimpleStorage.getOwner()
+      .then(_owner => {
+        this.owner = _owner;
+      })
+      .catch(error => {
+        console.log(error);
+      });
   },
   methods: {
-    submitData (event) {
+    setStoredData (event) {
       /**
        * 1. Retrieve input from text box
-       * 2. Call set method on SimpleStorage
+       * 2. Call setStoredData method on SimpleStorage
        * 3. Display result to screen
        */
       let input = event.target.elements.data.value;
@@ -84,6 +103,24 @@ export default {
       SimpleStorage.setStoredData(input)
         .then(r => {
           this.storedData = input;
+        })
+        .catch(error => {
+          console.log(error);
+        })
+    },
+    setOwner (event) {
+      /**
+       * 1. Retrieve input from text box
+       * 2. Call setOwner method on SimpleStorage
+       * 3. Display result to screen
+       */
+      let input = event.target.elements.owner.value;
+
+      this.owner = "pending";
+
+      SimpleStorage.setOwner(input)
+        .then(r => {
+          this.owner = input;
         })
         .catch(error => {
           console.log(error);
